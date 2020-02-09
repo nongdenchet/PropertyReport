@@ -1,0 +1,14 @@
+spring:
+  profiles: container
+  data:
+    mongodb:
+      host: data
+      port: 27017
+
+---
+spring:
+  profiles: default
+  data:
+    mongodb:
+      host: localhost
+      port: 27017

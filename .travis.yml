@@ -1,7 +1,11 @@
 language: java
 
+services:
+  - docker
+
 jdk:
   - openjdk8
 
 script:
-  - ./mvnw clean install -B
+  - make build
+  - make test
