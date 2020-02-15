@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 	<groupId>rain</groupId>
 	<artifactId>property-report</artifactId>
-	<version>0.0.1</version>
+	<version>0.1</version>
 	<name>property-report</name>
 	<description>NSW Property Report</description>
 
@@ -25,5 +25,7 @@
 
 	<modules>
 		<module>app</module>
+    <module>crawler</module>
+		<module>data</module>
 	</modules>
 </project>

@@ -2,12 +2,14 @@ package rain.property.report;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class PropertyReportApplicationTests {
+@ActiveProfiles("test")
+public class PropertyReportApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
+		// No-op
 	}
-
 }

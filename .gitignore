@@ -31,4 +31,4 @@ build/
 .vscode/
 
 ### Mongo
-/data/**
+/db/**
