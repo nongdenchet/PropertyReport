@@ -12,3 +12,8 @@ run:
 
 test:
 	- mvn test
+
+release:
+	- make build
+	- heroku container:push web
+	- heroku container:release web
