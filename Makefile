@@ -1,3 +1,6 @@
+clean:
+	- mvn clean
+
 build:
 	- mvn clean
 	- mvn install -DskipTests

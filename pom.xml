@@ -27,5 +27,6 @@
 		<module>app</module>
     <module>crawler</module>
 		<module>data</module>
-	</modules>
+    <module>api</module>
+  </modules>
 </project>

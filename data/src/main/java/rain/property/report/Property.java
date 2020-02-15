@@ -1,32 +1,45 @@
 package rain.property.report;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Objects;
 
+@Document(collection = "properties")
 public final class Property {
-    private final String id;
+    private static final String BASE_URL = "https://www.realestate.com.au";
+
+    @Id
+    private String id;
+    @Field(name = "address")
     private final String address;
+    @Field(name = "url")
     private final String url;
+    @Field(name = "imageUrl")
     private final String imageUrl;
+    @Field(name = "price")
     private final String price;
+    @Field(name = "type")
     private final String type;
+    @Field(name = "bedrooms")
     private final int bedrooms;
+    @Field(name = "bathrooms")
     private final int bathrooms;
+    @Field(name = "carSpaces")
     private final int carSpaces;
 
-    private Property(Builder builder) {
-        this.id = builder.url;
-        this.address = builder.address;
-        this.url = builder.url;
-        this.imageUrl = builder.imageUrl;
-        this.price = builder.price;
-        this.type = builder.type;
-        this.bedrooms = builder.bedrooms;
-        this.bathrooms = builder.bathrooms;
-        this.carSpaces = builder.carSpaces;
-    }
-
-    public static Builder newProperty() {
-        return new Builder();
+    public Property(String id, String address, String url, String imageUrl, String price, String type,
+                    int bedrooms, int bathrooms, int carSpaces) {
+        this.id = id;
+        this.url = url;
+        this.address = address;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.type = type;
+        this.bedrooms = bedrooms;
+        this.bathrooms = bathrooms;
+        this.carSpaces = carSpaces;
     }
 
     public boolean isValid() {
@@ -35,6 +48,10 @@ public final class Property {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -123,7 +140,7 @@ public final class Property {
         }
 
         public Property build() {
-            return new Property(this);
+            return new Property(url, address, BASE_URL + url, imageUrl, price, type, bedrooms, bathrooms, carSpaces);
         }
 
         public Builder address(String address) {

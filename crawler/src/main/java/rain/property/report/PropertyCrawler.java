@@ -6,20 +6,31 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public final class PropertyCrawler {
     private static final Logger LOG = LoggerFactory.getLogger(PropertyCrawler.class);
     private static final String URL = "https://www.realestate.com.au/buy/property-house-between-600000-900000-in-nsw/list-1";
 
-    @Scheduled(fixedDelay = 5000)
+    private final PropertyRepository propertyRepository;
+
+    @Autowired
+    public PropertyCrawler(PropertyRepository propertyRepository) {
+        this.propertyRepository = propertyRepository;
+    }
+
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000L)
     public void execute() throws IOException {
         final Document document = Jsoup.connect(URL).get();
         final Elements results = document.getElementsByClass("results-card");
+        final List<Property> properties = new ArrayList<>(results.size());
         for (int i = 0; i < results.size(); i++) {
             final Element result = results.get(i);
             final Property property = Property.builder()
@@ -33,11 +44,15 @@ public final class PropertyCrawler {
                     .bedrooms(getFeature(result, "general-features__beds"))
                     .build();
             if (property.isValid()) {
+                properties.add(property);
                 System.out.println("Valid: " + property);
             } else {
                 System.out.println("Invalid: " + property);
             }
         }
+        propertyRepository.saveAll(properties)
+                .ignoreElements()
+                .block();
     }
 
     private int getFeature(Element result, String className) {
