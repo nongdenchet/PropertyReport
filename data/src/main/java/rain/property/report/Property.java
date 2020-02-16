@@ -1,5 +1,6 @@
 package rain.property.report;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -42,6 +43,7 @@ public final class Property {
         this.carSpaces = carSpaces;
     }
 
+    @JsonIgnore
     public boolean isValid() {
         return !id.isEmpty();
     }
