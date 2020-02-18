@@ -9,6 +9,3 @@ run:
 
 test:
 	- ./mvnw test
-
-release:
-	- make build && heroku container:push web && heroku container:release web
