@@ -77,7 +77,7 @@ public final class PropertyCrawler {
                 return 0;
             }
         } catch (NoSuchElementException e) {
-            LOG.error("getFeature error", e);
+            LOG.error(e.getMessage());
             return 0;
         }
     }
@@ -93,7 +93,7 @@ public final class PropertyCrawler {
                 return "";
             }
         } catch (NoSuchElementException e) {
-            LOG.error("getAddress error", e);
+            LOG.error(e.getMessage());
             return "";
         }
     }
@@ -103,7 +103,7 @@ public final class PropertyCrawler {
             final WebElement type = element.findElement(By.className("residential-card__property-type"));
             return type.getText();
         } catch (NoSuchElementException e) {
-            LOG.error("getType error", e);
+            LOG.error(e.getMessage());
             return "";
         }
     }
@@ -113,7 +113,7 @@ public final class PropertyCrawler {
             final WebElement price = element.findElement(By.className("property-price"));
             return price.getText();
         } catch (NoSuchElementException e) {
-            LOG.error("getPrice error", e);
+            LOG.error(e.getMessage());
             return "";
         }
     }
@@ -129,7 +129,7 @@ public final class PropertyCrawler {
                 return "";
             }
         } catch (NoSuchElementException e) {
-            LOG.error("getUrl error", e);
+            LOG.error(e.getMessage());
             return "";
         }
     }
@@ -146,7 +146,7 @@ public final class PropertyCrawler {
                 return "";
             }
         } catch (NoSuchElementException e) {
-            LOG.error("address error", e);
+            LOG.error(e.getMessage());
             return "";
         }
     }

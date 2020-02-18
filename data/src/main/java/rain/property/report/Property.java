@@ -9,8 +9,6 @@ import java.util.Objects;
 
 @Document(collection = "properties")
 public final class Property {
-    private static final String BASE_URL = "https://www.realestate.com.au";
-
     @Id
     private String id;
     @Field(name = "address")
@@ -142,7 +140,7 @@ public final class Property {
         }
 
         public Property build() {
-            return new Property(url, address, BASE_URL + url, imageUrl, price, type, bedrooms, bathrooms, carSpaces);
+            return new Property(url, address, url, imageUrl, price, type, bedrooms, bathrooms, carSpaces);
         }
 
         public Builder address(String address) {
