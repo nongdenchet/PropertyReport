@@ -1,10 +1,13 @@
 package rain.property.report;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Document(collection = "properties")
@@ -27,6 +30,12 @@ public final class Property {
     private final int bathrooms;
     @Field(name = "carSpaces")
     private final int carSpaces;
+    @Field(name = "createdAt")
+    @CreatedDate
+    private Date createdAt;
+    @Field(name = "updatedAt")
+    @LastModifiedDate
+    private Date updatedAt;
 
     public Property(String id, String address, String url, String imageUrl, String price, String type,
                     int bedrooms, int bathrooms, int carSpaces) {
@@ -90,6 +99,16 @@ public final class Property {
         return carSpaces;
     }
 
+    @JsonIgnore
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonIgnore
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -114,8 +133,7 @@ public final class Property {
     @Override
     public String toString() {
         return "Property{" +
-                "id='" + id + '\'' +
-                ", address='" + address + '\'' +
+                "address='" + address + '\'' +
                 ", url='" + url + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", price='" + price + '\'' +

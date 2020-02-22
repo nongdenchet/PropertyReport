@@ -29,6 +29,9 @@ services:
     container_name: app
     environment:
       - SPRING_PROFILES_ACTIVE=container
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+
     ports:
       - 8080:8080
     links:
