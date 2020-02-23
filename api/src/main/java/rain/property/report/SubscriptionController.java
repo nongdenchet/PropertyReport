@@ -12,7 +12,6 @@ import rain.property.report.dto.ErrorResponse;
 import rain.property.report.dto.SubscribeRequest;
 import rain.property.report.dto.UnsubscribeRequest;
 import rain.property.report.exception.EnumNotFoundException;
-import rain.property.report.utils.Validator;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;

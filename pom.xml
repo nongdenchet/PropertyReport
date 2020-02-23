@@ -28,5 +28,6 @@
     <module>scheduler</module>
 		<module>data</module>
     <module>api</module>
+    <module>common</module>
   </modules>
 </project>

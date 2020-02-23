@@ -1,4 +1,4 @@
-package rain.property.report.utils;
+package rain.property.report;
 
 import java.util.regex.Pattern;
 

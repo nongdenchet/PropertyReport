@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import rain.property.report.exception.EnumNotFoundException;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Document(collection = "subscriptions")
@@ -19,6 +20,8 @@ public final class Subscription {
     private final String email;
     @Field(name = "name")
     private final String name;
+    @Field(name = "sentReportAt")
+    private final Date sentReportAt;
 
     public Builder builder() {
         return new Builder().id(id)
@@ -32,7 +35,7 @@ public final class Subscription {
     }
 
     public enum Type {
-        WEEKLY, DAILY, FORTNIGHTLY, MONTHLY, YEARLY;
+        DAILY, WEEKLY, FORTNIGHTLY;
 
         public static Type getValue(String value) {
             try {
@@ -41,13 +44,26 @@ public final class Subscription {
                 throw new EnumNotFoundException();
             }
         }
+
+        public int toDays() {
+            switch (this) {
+                case DAILY:
+                    return 1;
+                case WEEKLY:
+                    return 7;
+                case FORTNIGHTLY:
+                    return 14;
+            }
+            return 1;
+        }
     }
 
-    public Subscription(String id, Type type, String email, String name) {
+    public Subscription(String id, Type type, String email, String name, Date sentReportAt) {
         this.id = id;
         this.type = type;
         this.email = email;
         this.name = name;
+        this.sentReportAt = sentReportAt;
     }
 
     @JsonIgnore
@@ -68,6 +84,11 @@ public final class Subscription {
     @JsonProperty("name")
     public String getName() {
         return name;
+    }
+
+    @JsonIgnore
+    public Date getSentReportAt() {
+        return sentReportAt;
     }
 
     @Override
@@ -91,12 +112,13 @@ public final class Subscription {
         private Type type;
         private String email;
         private String name;
+        private Date sentReportAt;
 
         private Builder() {
         }
 
         public Subscription build() {
-            return new Subscription(id, type, email, name);
+            return new Subscription(id, type, email, name, sentReportAt);
         }
 
         public Builder id(String id) {
@@ -116,6 +138,11 @@ public final class Subscription {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder sentReportAt(Date sentReportAt) {
+            this.sentReportAt = sentReportAt;
             return this;
         }
     }
