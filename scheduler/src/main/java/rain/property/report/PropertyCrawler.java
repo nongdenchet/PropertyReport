@@ -1,6 +1,10 @@
 package rain.property.report;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
@@ -8,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,53 +23,59 @@ import java.util.List;
 public final class PropertyCrawler {
     private static final Logger LOG = LoggerFactory.getLogger(PropertyCrawler.class);
     private static final String SPEC = "http://selenium-hub:4444/wd/hub";
-    private static final String CRAWL_URL = "https://www.realestate.com.au/buy/property-house-between-600000-900000-in-nsw/list-1";
 
     private final PropertyRepository propertyRepository;
+    private final CriteriaRepository criteriaRepository;
 
     @Autowired
-    public PropertyCrawler(PropertyRepository propertyRepository) {
+    public PropertyCrawler(PropertyRepository propertyRepository, CriteriaRepository criteriaRepository) {
         this.propertyRepository = propertyRepository;
+        this.criteriaRepository = criteriaRepository;
     }
 
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000L)
     public void execute() throws IOException {
-        RemoteWebDriver webDriver = null;
+        RemoteWebDriver driver = null;
         try {
-            webDriver = new RemoteWebDriver(new URL(SPEC), DesiredCapabilities.firefox());
-            webDriver.get(CRAWL_URL);
-            crawlProperties(webDriver);
+            final RemoteWebDriver webDriver = new RemoteWebDriver(new URL(SPEC), DesiredCapabilities.firefox());
+            driver = webDriver;
+            criteriaRepository.findAll()
+                    .concatMap(c -> crawlProperties(webDriver, c))
+                    .ignoreElements()
+                    .block();
         } finally {
-            if (webDriver != null) {
-                webDriver.quit();
+            if (driver != null) {
+                driver.quit();
             }
         }
     }
 
-    private void crawlProperties(WebDriver webDriver) {
-        final List<Property> properties = new ArrayList<>();
-        for (WebElement element : webDriver.findElements(By.className("results-card"))) {
-            final Property property = Property.builder()
-                    .address(getAddress(element))
-                    .imageUrl(getImageUrl(webDriver, element))
-                    .url(getUrl(element))
-                    .price(getPrice(element))
-                    .type(getType(element))
-                    .bathrooms(getFeature(element, "general-features__baths"))
-                    .carSpaces(getFeature(element, "general-features__cars"))
-                    .bedrooms(getFeature(element, "general-features__beds"))
-                    .build();
-            if (property.isValid()) {
-                properties.add(property);
-                LOG.info("Valid: " + property);
-            } else {
-                LOG.warn("Invalid: " + property);
+    private Mono<Object> crawlProperties(WebDriver webDriver, Criteria criteria) {
+        return Mono.fromCallable(() -> {
+            webDriver.get(criteria.getUrl());
+            final List<Property> properties = new ArrayList<>();
+            for (WebElement element : webDriver.findElements(By.className("results-card"))) {
+                final Property property = Property.builder()
+                        .address(getAddress(element))
+                        .imageUrl(getImageUrl(webDriver, element))
+                        .url(getUrl(element))
+                        .price(getPrice(element))
+                        .type(getType(element))
+                        .bathrooms(getFeature(element, "general-features__baths"))
+                        .carSpaces(getFeature(element, "general-features__cars"))
+                        .bedrooms(getFeature(element, "general-features__beds"))
+                        .build();
+                if (property.isValid()) {
+                    properties.add(property);
+                    LOG.info("Valid: " + property);
+                } else {
+                    LOG.warn("Invalid: " + property);
+                }
             }
-        }
-        LOG.info("Saving");
-        propertyRepository.saveAll(properties)
-                .ignoreElements()
-                .block();
+            LOG.info("Saving");
+            return properties;
+        }).flatMap(properties -> propertyRepository.saveAll(properties)
+                .ignoreElements());
     }
 
     private int getFeature(WebElement element, String className) {

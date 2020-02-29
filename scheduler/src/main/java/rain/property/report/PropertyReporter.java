@@ -42,7 +42,7 @@ public final class PropertyReporter {
 
     @Scheduled(fixedDelay = 60 * 15 * 1000L)
     public void execute() {
-        final List<Property> latestProperties = propertyRepository.findAll()
+        final List<Property> latestProperties = propertyRepository.findAllByOrderByUpdatedAtDesc()
                 .take(15)
                 .collectList()
                 .block();

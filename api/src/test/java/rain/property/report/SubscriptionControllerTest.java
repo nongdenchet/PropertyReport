@@ -60,12 +60,12 @@ public class SubscriptionControllerTest {
                 .block();
         webTestClient.post()
                 .uri("/subscriptions")
-                .body(Mono.just(new SubscribeRequest("monthly", "blah@gmail.com", "blah")), SubscribeRequest.class)
+                .body(Mono.just(new SubscribeRequest("weekly", "blah@gmail.com", "blah")), SubscribeRequest.class)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.type").isEqualTo("MONTHLY")
+                .jsonPath("$.type").isEqualTo("WEEKLY")
                 .jsonPath("$.name").isEqualTo("blah")
                 .jsonPath("$.email").isEqualTo("blah@gmail.com");
         final Subscription subscription = subscriptionRepository.findByEmail("blah@gmail.com")
@@ -113,7 +113,7 @@ public class SubscriptionControllerTest {
                 .exchange()
                 .expectStatus().isBadRequest()
                 .expectBody()
-                .jsonPath("$.error").isEqualTo("type must be in [WEEKLY, DAILY, FORTNIGHTLY, MONTHLY, YEARLY]");
+                .jsonPath("$.error").isEqualTo("type must be in [DAILY, WEEKLY, FORTNIGHTLY]");
         assertNoValue("quan@gmail.com");
     }
 
